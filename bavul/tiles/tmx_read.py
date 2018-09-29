@@ -5,19 +5,11 @@ Created on Fri Sep 28 13:54:49 2018
 @author: Lorango
 """
 
-print("Dela!")
-
 import xml.etree.ElementTree as et
 import numpy as np
 
-#tree = et.parse('maps/test_1.tmx')
-#root = tree.getroot()
-#
-#for child in root:
-#    print(child.tag, child.attrib)
 
-
-class Plocica:
+class Tileset:
     def __init__(self, path):
         self.name = 'missing_name'
         self.tile_width = 1
@@ -36,31 +28,38 @@ class Plocica:
         self.name = root.attrib['name']
         self.tile_width = int(root.attrib['tilewidth'])
         self.tile_heght = int(root.attrib['tileheight'])
-#        self.width = int(root.attrib['width'])
-#        self.heght = int(root.attrib['height'])
 
         for child in root:
             if child.tag == 'image':
                 self.image_source = child.attrib['source']
-        pass
 
 
-class Sloj:
-    def __init__(self, _id, name, width, heght, data):
-        self.id = _id
-        self.name = name
-        self.width = width
-        self.heght = heght
+class Layer:
+    def __init__(self, xml_element):
+        self.load_layer(xml_element)
 
-        self.data = np.reshape(np.array(data), (width, heght))
+    def load_layer(self, xml_element):
+        self.id = int(xml_element.attrib['id'])
+        self.name = xml_element.attrib['name']
+        self.width = int(xml_element.attrib['width'])
+        self.height = int(xml_element.attrib['height'])
+
+        for element in xml_element:
+            if element.tag == 'data':
+                if element.attrib['encoding'] == 'csv':
+                    self.data_edit(element.text)
+                else:
+                    print('Greska! Nerazumin enkoding podataka u mapi')
+
+    def data_edit(self, data_raw):
+        data_list_int = []
+        data_list_str = data_raw.split(',')
+        for s in data_list_str:
+            data_int = int(s.strip())
+            data_list_int.append(data_int)
+        self.data = np.reshape(np.array(data_list_int),
+                               [self.width, self.height])
         print(self.data)
-
-#        for j in range():
-#            for j in range(width)
-#        self.data = []
-
-        pass
-    pass
 
 
 class Karta:
@@ -84,20 +83,10 @@ class Karta:
         self.width = int(root.attrib['width'])
         self.heght = int(root.attrib['height'])
 
-        podatci = []
-
         for child in root:
             if child.tag == 'layer':
-                for data in child:
-                    if data.tag == 'data':
-                        dd = data.text.split(',')
-                        for s in dd:
-                            podatci.append(int(s.strip()))
-                            print(podatci[-1])
-        print(podatci)
-        sl_1 = Sloj(1, 'asd', self.width, self.heght, podatci)
+                ##
+                sl_1 = Layer(child)
 
-#                        print(data.text.split(','))
-#                self.image_source = child.attrib['source']
         pass
 
