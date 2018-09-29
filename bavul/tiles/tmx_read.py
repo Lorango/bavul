@@ -10,17 +10,15 @@ import numpy as np
 
 
 class Tileset:
-    def __init__(self, path):
-        self.name = 'missing_name'
-        self.tile_width = 1
-        self.tile_heght = 1
-        self.width = 1
-        self.heght = 1
-        self.image_source = None
+    def __init__(self, xml_element):
+        self.load(xml_element)
 
-        self.load(path)
+    def load(self, xml_element):
+        path_ = xml_element.attrib['source']
+        # uredivanje putanje [PH] U butućnosti promjenit.
+        if path_[0] == '.':
+            path = path_[3:]  # zanemari u putnji "../"
 
-    def load(self, path):
         print(path)
         tree = et.parse(path)
         root = tree.getroot()
@@ -31,10 +29,14 @@ class Tileset:
 
         for child in root:
             if child.tag == 'image':
-                self.image_source = child.attrib['source']
+                # uredivanje putanje [PH] U butućnosti promjenit.
+                if child.attrib['source'][0] == '.':
+                    # zanemari u putnji "../"
+                   self.image_source = child.attrib['source'][3:]
+        print(self.image_source)
 
 
-class Layer:
+class Tilemap_layer:
     def __init__(self, xml_element):
         self.load_layer(xml_element)
 
@@ -54,9 +56,11 @@ class Layer:
     def data_edit(self, data_raw):
         data_list_int = []
         data_list_str = data_raw.split(',')
+
         for s in data_list_str:
             data_int = int(s.strip())
             data_list_int.append(data_int)
+
         self.data = np.reshape(np.array(data_list_int),
                                [self.width, self.height])
         print(self.data)
@@ -64,13 +68,8 @@ class Layer:
 
 class Karta:
     def __init__(self, path):
-        self.name = 'missing_name'
-        self.tile_width = 1
-        self.tile_heght = 1
-        self.width = 1
-        self.heght = 1
-        self.image_source = None
-
+        self.tilemap_layers = []
+        self.tilesets = [] #  (tilest_ref, firstgid)
         self.load(path)
 
     def load(self, path):
@@ -84,9 +83,13 @@ class Karta:
         self.heght = int(root.attrib['height'])
 
         for child in root:
+            if child.tag == 'tileset':
+                pl_1 = Tileset(child)
+                continue
+
             if child.tag == 'layer':
-                ##
-                sl_1 = Layer(child)
+                sl_1 = Tilemap_layer(child)
+                continue
 
         pass
 
