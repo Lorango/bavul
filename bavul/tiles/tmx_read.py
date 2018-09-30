@@ -9,6 +9,36 @@ import xml.etree.ElementTree as et
 import numpy as np
 
 
+class Tilemap:
+    def __init__(self, path):
+        self.tilesets = []  # (tilest_ref, firstgid)
+        self.tilemap_layers = []
+        self.load(path)
+
+        print(self.tilesets)
+        print(self.tilemap_layers)
+
+    def load(self, path):
+        print(path)
+        tree = et.parse(path)
+        root = tree.getroot()
+
+        self.tile_width = int(root.attrib['tilewidth'])
+        self.tile_heght = int(root.attrib['tileheight'])
+        self.width = int(root.attrib['width'])
+        self.heght = int(root.attrib['height'])
+
+        for child in root:
+            if child.tag == 'tileset':
+                argument = (Tileset(child), int(child.attrib['firstgid']))
+                self.tilesets.append(argument)
+                continue
+
+            if child.tag == 'layer':
+                self.tilemap_layers.append(Tilemap_layer(child))
+                continue
+
+
 class Tileset:
     def __init__(self, xml_element):
         self.load(xml_element)
@@ -32,7 +62,7 @@ class Tileset:
                 # uredivanje putanje [PH] U butućnosti promjenit.
                 if child.attrib['source'][0] == '.':
                     # zanemari u putnji "../"
-                   self.image_source = child.attrib['source'][3:]
+                    self.image_source = child.attrib['source'][3:]
         print(self.image_source)
 
 
@@ -64,32 +94,3 @@ class Tilemap_layer:
         self.data = np.reshape(np.array(data_list_int),
                                [self.width, self.height])
         print(self.data)
-
-
-class Karta:
-    def __init__(self, path):
-        self.tilemap_layers = []
-        self.tilesets = [] #  (tilest_ref, firstgid)
-        self.load(path)
-
-    def load(self, path):
-        print(path)
-        tree = et.parse(path)
-        root = tree.getroot()
-
-        self.tile_width = int(root.attrib['tilewidth'])
-        self.tile_heght = int(root.attrib['tileheight'])
-        self.width = int(root.attrib['width'])
-        self.heght = int(root.attrib['height'])
-
-        for child in root:
-            if child.tag == 'tileset':
-                pl_1 = Tileset(child)
-                continue
-
-            if child.tag == 'layer':
-                sl_1 = Tilemap_layer(child)
-                continue
-
-        pass
-
