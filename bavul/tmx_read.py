@@ -7,16 +7,17 @@ Created on Fri Sep 28 13:54:49 2018
 
 import xml.etree.ElementTree as et
 import numpy as np
+# import bavul.engine.natrix  # testiranje učitavanja unutar modula
 
 
 class Tilemap:
     def __init__(self, path):
         self.tilesets = []  # (tilest_ref, firstgid)
-        self.tilemap_layers = []
+        self.layers = []
         self.load(path)
 
         print(self.tilesets)
-        print(self.tilemap_layers)
+        print(self.layers)
 
     def load(self, path):
         print(path)
@@ -30,12 +31,12 @@ class Tilemap:
 
         for child in root:
             if child.tag == 'tileset':
-                argument = (Tileset(child), int(child.attrib['firstgid']))
+                argument = [Tileset(child), int(child.attrib['firstgid'])]
                 self.tilesets.append(argument)
                 continue
 
             if child.tag == 'layer':
-                self.tilemap_layers.append(Tilemap_layer(child))
+                self.layers.append(Tilemap_layer(child))
                 continue
 
 
