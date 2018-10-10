@@ -42,7 +42,7 @@ class Game:
 
         # Testni kod.
         print('Fos.')
-        self.images['test'] = pygame.image.load('tileset_images/xxx.png')
+        self.images['test'] = pygame.image.load('images/tilesets/xxx.png')
         pass
 
     def main_loop(self):
