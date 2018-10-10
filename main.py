@@ -5,11 +5,9 @@ Created on Fri Sep 28 10:26:54 2018
 @author: Lorango
 """
 
-import sys
+import bavul.natrix
+#import bavul.tmx_read
 
-if not ('../bavul' in sys.path):
-    sys.path.append("../bavul")
-
-import bavul.tiles.tmx_read
-
-ma_1 = bavul.tiles.tmx_read.Tilemap('maps/test_1.tmx')
+#ma_1 = bavul.tmx_read.Tilemap('maps/test_1.tmx')
+game = bavul.natrix.Game()
+game.main_loop()

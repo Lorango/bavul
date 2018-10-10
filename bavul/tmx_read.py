@@ -7,7 +7,7 @@ Created on Fri Sep 28 13:54:49 2018
 
 import xml.etree.ElementTree as et
 import numpy as np
-# import bavul.engine.natrix  # testiranje učitavanja unutar modula
+import bavul.natrix  # testiranje učitavanja unutar modula
 
 
 class Tilemap:
