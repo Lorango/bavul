@@ -5,16 +5,19 @@ Created on Fri Sep 28 13:54:49 2018
 @author: Lorango
 """
 
+import os
+
 import pygame
 import pygame.locals
 
+import bavul.tmx_read
 
 class Game:
     """Igra.
 
 
     """
-    def __init__(self):
+    def __init__(self, room_zero="maps/system/room_0"):
         """Igra. Inicijalizacija igre.
 
         """
@@ -30,6 +33,12 @@ class Game:
         # Naziv prozora igre.
         pygame.display.set_caption('Basic Pygame program')
 
+        # Dictionary koji sadržava sve sobe koje se učita.
+        self.rooms = {}
+
+        # Dictionary koji sadržava sve aktivne sobe. (Inicializirani objekti)
+        self.active_rooms = {}
+
         # Dictionary koji sadržava sve surface-e koje se učita.
         self.images = {}
 
@@ -40,23 +49,19 @@ class Game:
         # Trenutno aktivna kamera
         self.camera = Camera(self)
 
-        # Test sobe.
-        self.r1 = Room(self)
-        self.r2 = Room(self, 200)
-
-        # Trenutno aktivna soba.
-        self.room = self.r1
-
         # Testni kod.
         print('Fos.')
         self.images['test'] = pygame.image.load('images/tilesets/xxx.png')
+
+        self.load_resurces()
+        self.active_rooms['test_2'] = self.rooms['test_2']
         pass
 
     def main_loop(self):
         """Funkcija - glavna petlja.
 
         """
-        # testna varijabla za mjenjanje soba
+        # testna varijabla opće uporabe.
         swich = 0
         while True:
             # Event loop.
@@ -68,14 +73,19 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
 
-                        # test mjenjanje soba
+                        # testni kod opće uporabe.
                         if swich:
-                            print('One')
-                            self.room = self.r1
+                            pass
                         else:
-                            print('Two')
-                            self.room = self.r2
+                            pass
                         swich = not swich
+
+                # step event u sustavu soba
+                for _, room in self.active_rooms.items():
+#                    print(room)
+                    for _, instance in room.instances.items():
+                        print('ko')
+                    pass
 
             # Pozivanje vlastite draw metod za crtanje.
             self.draw()
@@ -94,7 +104,7 @@ class Game:
         # self.screen_input.blit(self.images['test'], (0, 0))
 
         # Crtanje sobe
-        self.room.draw()
+#        self.room.draw()
 
 
         # Primjena filtara, kamere i crtanje na screen_output.
@@ -114,6 +124,25 @@ class Game:
 
         # Osvježavanje cjelokupnog ekrana
         pygame.display.flip()
+        pass
+
+
+    def load_resurces(self):
+        """Metoda za učitavanje svih vanjskih file-ova.
+
+        """
+
+        # učitavanje svih soba.
+        for name, path in crawl('maps'):
+            self.rooms[name] = Room(self, path, name)
+
+        # učitavanje svih tileset-ova. (Neće se na ov način učitavat)
+        for name, path in crawl('tilesets'):
+            pass
+
+        # učitavanje svih slika. (Neće se na ov način učitavat)
+        for name, path in crawl('images'):
+            pass
         pass
 
 
@@ -169,46 +198,68 @@ class Room:
     """Soba.
 
     """
-    def __init__(self, game, x=300 ):
+    def __init__(self, game, room_path, name):
         """Inicijalizacija sobe.
 
         """
-        self.size = (740, 440)
+
+        self.name = name
         self.game = game
-        # self.surface_input = surface_input
+        self.room_path = room_path
 
-        # Test zamjena soba
-        self.x = x
+        self.tilemap = None
+        self.instances = {}
 
-#        self.images = {}
-#        self.images['test'] = pygame.image.load('images/tilesets/xxx.png')
+#        self.load_map()
+        pass
+
+    def load_map(self):
+        """Učitavanje osnovnih podataka o mapi.
+
+        """
+        self.game.active_rooms[self.name] = self
+        self.tilemap = bavul.tmx_read.Tilemap(self.room_path)
+        pass
+
+    def init_map(self):
+        """Inicijalizacija objekata u mapi.
+
+        """
+
         pass
 
     def draw(self):
         """Funkcija za ...
 
         """
-        # skraćivanje naziva
-        surface_input = self.game.surface_input
-        images = self.game.images
-
-        # Testno ispunjavanje ekrana testnim slikama skalirani raznim metodama.
-        surface_input.blit(pygame.transform.smoothscale(images['test'], (100, 100)), (300, self.x))
-        surface_input.blit(pygame.transform.scale2x(images['test']), (0, 0))
-        surface_input.blit(images['test'], (0, 0))
+#        # skraćivanje naziva
+#        surface_input = self.game.surface_input
+#        images = self.game.images
+#
+#        # Testno ispunjavanje ekrana žutom bojom.
+#        pygame.draw.rect(self.game.surface_input, (50, 250, 250), (0, 0, *self.size))
+#
+#        # Testno ispunjavanje ekrana testnim slikama skalirani raznim metodama.
+#        surface_input.blit(images['test'], (0, 0))
         pass
 
+def crawl(folder_name):
+    """Pronađi sve fajlove u direktoriju.
 
+    """
+#    print(os.getcwd())
 
+    paths = []
+    parent_path = os.path.join(os.getcwd(), folder_name)
+    for dir_path, _, file_names in os.walk(parent_path):
+        for file in file_names:
+            full_path = os.path.join(dir_path, file)
+            print(full_path)
 
+            # samo ime file-a bez nastavka
+            short_file_name = file.split('.')[0]
+#            print(short_file_name)
 
-
-
-
-
-
-
-
-
-
-
+#            print(file)
+            paths.append((short_file_name, full_path))
+    return(paths)
