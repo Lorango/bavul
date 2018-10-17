@@ -27,7 +27,7 @@ class Tilemap:
         self.tile_width = int(root.attrib['tilewidth'])
         self.tile_heght = int(root.attrib['tileheight'])
         self.width = int(root.attrib['width'])
-        self.heght = int(root.attrib['height'])
+        self.height = int(root.attrib['height'])
 
         for child in root:
             if child.tag == 'tileset':
@@ -48,7 +48,8 @@ class Tileset:
         path_ = xml_element.attrib['source']
         # uredivanje putanje [PH] U butućnosti promjenit.
         if path_[0] == '.':
-            path = path_[3:]  # zanemari u putnji "../"
+            # zanemari u putnji "../" i na početak dodaj "maps/"
+            path = 'maps/' + path_[3:]
 
         print(path)
         tree = et.parse(path)
