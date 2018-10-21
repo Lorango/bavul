@@ -14,6 +14,7 @@ class Tilemap:
     def __init__(self, path):
         self.tilesets = []  # (tilest_ref, firstgid)
         self.layers = []
+        self.object_layers = []
         self.load(path)
 
         print(self.tilesets)
@@ -37,6 +38,10 @@ class Tilemap:
 
             if child.tag == 'layer':
                 self.layers.append(Tilemap_layer(child))
+                continue
+
+            if child.tag == 'objectgroup':
+                self.object_layers.append(Object_layer(child))
                 continue
 
 
@@ -96,3 +101,38 @@ class Tilemap_layer:
         self.data = np.reshape(np.array(data_list_int),
                                [self.width, self.height])
         print(self.data)
+
+
+class Object_layer:
+    def __init__(self, xml_element):
+        self.objects = {}
+        self.load_layer(xml_element)
+        print(self.objects)
+
+    def load_layer(self, xml_element):
+        self.id = int(xml_element.attrib['id'])
+        self.name = xml_element.attrib['name']
+
+        for element in xml_element:
+            if element.tag == 'object':
+                self.objects[element.attrib['name']] = Object(element)
+#                element.attrib['id']
+                pass
+
+class Object:
+    def __init__(self, xml_element):
+        self.load_layer(xml_element)
+
+    def load_layer(self, xml_element):
+        self.id = int(xml_element.attrib['id'])
+        self.name = xml_element.attrib['name']
+        self.x = int(xml_element.attrib['x'])
+        self.y = int(xml_element.attrib['y'])
+        self.width = int(xml_element.attrib['width'])
+        self.height = int(xml_element.attrib['height'])
+
+#        for element in xml_element:
+#            if element.tag == 'object':
+##                element.attrib['id']
+#                pass
+

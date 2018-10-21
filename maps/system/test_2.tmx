@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#d67e40" nextlayerid="4" nextobjectid="3">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#d67e40" nextlayerid="4" nextobjectid="4">
  <objectgroup id="3" name="Object Layer 1">
-  <object id="2" x="24" y="29" width="83" height="19">
+  <object id="2" name="test_text" x="24" y="29" width="83" height="19">
    <text wrap="1">Hello World</text>
   </object>
+  <object id="3" name="test_rect" x="16" y="81" width="74" height="26"/>
  </objectgroup>
 </map>

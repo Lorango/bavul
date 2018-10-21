@@ -55,6 +55,7 @@ class Game:
 
         self.load_resurces()
         self.active_rooms['test_2'] = self.rooms['test_2']
+        self.active_rooms['test_2'].active = True
         pass
 
     def main_loop(self):
@@ -104,7 +105,9 @@ class Game:
         # self.screen_input.blit(self.images['test'], (0, 0))
 
         # Crtanje sobe
-#        self.room.draw()
+        for _, room in self.active_rooms.items():
+            if room.active:
+                room.draw()
 
 
         # Primjena filtara, kamere i crtanje na screen_output.
@@ -202,6 +205,7 @@ class Room:
         """Inicijalizacija sobe.
 
         """
+        self.active = False
 
         self.name = name
         self.game = game
@@ -210,7 +214,7 @@ class Room:
         self.tilemap = None
         self.instances = {}
 
-#        self.load_map()
+        self.load_map()
         pass
 
     def load_map(self):
@@ -232,12 +236,12 @@ class Room:
         """Funkcija za ...
 
         """
-#        # skraćivanje naziva
-#        surface_input = self.game.surface_input
+        # skraćivanje naziva
+        surface_input = self.game.surface_input
 #        images = self.game.images
 #
-#        # Testno ispunjavanje ekrana žutom bojom.
-#        pygame.draw.rect(self.game.surface_input, (50, 250, 250), (0, 0, *self.size))
+        # Testno crtanje pravokutnika plavom bojom.
+        pygame.draw.rect(surface_input, (50, 50, 250), (100, 100, 100, 100))
 #
 #        # Testno ispunjavanje ekrana testnim slikama skalirani raznim metodama.
 #        surface_input.blit(images['test'], (0, 0))
