@@ -7,7 +7,6 @@ Created on Fri Sep 28 13:54:49 2018
 
 import xml.etree.ElementTree as et
 import numpy as np
-import bavul.natrix  # testiranje učitavanja unutar modula
 
 
 class Tilemap:
@@ -126,10 +125,14 @@ class Object:
     def load_layer(self, xml_element):
         self.id = int(xml_element.attrib['id'])
         self.name = xml_element.attrib['name']
-        self.x = int(xml_element.attrib['x'])
-        self.y = int(xml_element.attrib['y'])
-        self.width = int(xml_element.attrib['width'])
-        self.height = int(xml_element.attrib['height'])
+
+        x = int(xml_element.attrib['x'])
+        y = int(xml_element.attrib['y'])
+        width = int(xml_element.attrib['width'])
+        height = int(xml_element.attrib['height'])
+
+        # Zapakiravanje argumenata za jednostavnije stvaranje Rect-a.
+        self.rect_arg = (x, y, width, height)
 
 #        for element in xml_element:
 #            if element.tag == 'object':
