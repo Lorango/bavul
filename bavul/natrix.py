@@ -50,12 +50,12 @@ class Game:
         self.camera = Camera(self)
 
         # Testni kod.
-        print('Fos.')
         self.images['test'] = pygame.image.load('images/tilesets/xxx.png')
 
         self.load_resurces()
         self.active_rooms['test_2'] = self.rooms['test_2']
         self.active_rooms['test_2'].active = True
+        self.active_rooms['test_2'].init_map()
         pass
 
     def main_loop(self):
@@ -83,9 +83,8 @@ class Game:
 
                 # step event u sustavu soba
                 for _, room in self.active_rooms.items():
-#                    print(room)
                     for _, instance in room.instances.items():
-                        print('ko')
+                        pass
                     pass
 
             # Pozivanje vlastite draw metod za crtanje.
@@ -99,16 +98,9 @@ class Game:
         # Testno ispunjavanje ekrana žutom bojom.
         self.surface_input.fill((250, 250, 50))
 
-        # Testno ispunjavanje ekrana testnim slikama skalirani raznim metodama.
-        # self.screen_input.blit(pygame.transform.smoothscale(self.images['test'], (100, 100)), (300, 300))
-        # self.screen_input.blit(pygame.transform.scale2x(self.images['test']), (0, 0))
-        # self.screen_input.blit(self.images['test'], (0, 0))
-
         # Crtanje sobe
         for _, room in self.active_rooms.items():
-            if room.active:
-                room.draw()
-
+            room.draw()
 
         # Primjena filtara, kamere i crtanje na screen_output.
 
@@ -166,11 +158,6 @@ class Camera:
         self.game = game
 
         self.rect = pygame.Rect(0, 0, *size)
-        # self.surface_input = game.surface_input
-        # self.surface_output = game.surface_output
-
-        # testni primjer pomicanja kamere
-        # self.rect.move_ip(-16, -16)
         pass
 
     def draw(self):
@@ -229,6 +216,10 @@ class Room:
         """Inicijalizacija objekata u mapi.
 
         """
+        for object_layer in self.tilemap.object_layers:
+            for name, _object in object_layer.objects.items():
+                self.instances[name] = Primitive(self.game, [_object.x, _object.y, _object.width, _object.height], name)
+                print(_object.x, _object.y, _object.width, _object.height)
 
         pass
 
@@ -239,13 +230,43 @@ class Room:
         # skraćivanje naziva
         surface_input = self.game.surface_input
 #        images = self.game.images
-#
-        # Testno crtanje pravokutnika plavom bojom.
-        pygame.draw.rect(surface_input, (50, 50, 250), (100, 100, 100, 100))
-#
-#        # Testno ispunjavanje ekrana testnim slikama skalirani raznim metodama.
-#        surface_input.blit(images['test'], (0, 0))
+
+        if self.active:
+            # Testno crtanje pravokutnika plavom bojom.
+            pygame.draw.rect(surface_input, (50, 50, 250), (100, 100, 100, 100))
+
+            # iscrtaj svoje instance
+            for _, instance in self.instances.items():
+                instance.draw()
         pass
+
+
+class Primitive:
+    """Instanca klase.
+
+    """
+    def __init__(self, game, rect_like=[200, 200, 200, 200], name='test'):
+        """Primitivna inicijalizacija objekta.
+
+        """
+
+        self.name = name
+        self.game = game
+
+        self.rect = pygame.Rect(rect_like)
+        pass
+
+    def draw(self):
+        """Primitivno crtanje na ekran.
+
+        """
+        # skraćivanje naziva
+        surface_input = self.game.surface_input
+
+        # crtanje sebe
+        pygame.draw.rect(surface_input, (250, 50, 250), self.rect)
+        pass
+
 
 def crawl(folder_name):
     """Pronađi sve fajlove u direktoriju.
@@ -258,7 +279,7 @@ def crawl(folder_name):
     for dir_path, _, file_names in os.walk(parent_path):
         for file in file_names:
             full_path = os.path.join(dir_path, file)
-            print(full_path)
+#            print(full_path)
 
             # samo ime file-a bez nastavka
             short_file_name = file.split('.')[0]

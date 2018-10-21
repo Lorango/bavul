@@ -17,11 +17,11 @@ class Tilemap:
         self.object_layers = []
         self.load(path)
 
-        print(self.tilesets)
-        print(self.layers)
+#        print(self.tilesets)
+#        print(self.layers)
 
     def load(self, path):
-        print(path)
+#        print(path)
         tree = et.parse(path)
         root = tree.getroot()
 
@@ -56,7 +56,7 @@ class Tileset:
             # zanemari u putnji "../" i na početak dodaj "maps/"
             path = 'maps/' + path_[3:]
 
-        print(path)
+#        print(path)
         tree = et.parse(path)
         root = tree.getroot()
 
@@ -70,7 +70,7 @@ class Tileset:
                 if child.attrib['source'][0] == '.':
                     # zanemari u putnji "../"
                     self.image_source = child.attrib['source'][3:]
-        print(self.image_source)
+#        print(self.image_source)
 
 
 class Tilemap_layer:
@@ -100,14 +100,14 @@ class Tilemap_layer:
 
         self.data = np.reshape(np.array(data_list_int),
                                [self.width, self.height])
-        print(self.data)
+#        print(self.data)
 
 
 class Object_layer:
     def __init__(self, xml_element):
         self.objects = {}
         self.load_layer(xml_element)
-        print(self.objects)
+#        print(self.objects)
 
     def load_layer(self, xml_element):
         self.id = int(xml_element.attrib['id'])
