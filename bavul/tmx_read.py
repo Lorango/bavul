@@ -114,43 +114,66 @@ class Object_layer:
 
         for element in xml_element:
             if element.tag == 'object':
-                self.objects[element.attrib['name']] = Object(element)
+                oo = Object(element)
+                self.objects[oo.name] = oo
 #                element.attrib['id']
                 pass
 
 
-class Object:
-    """
-    U budućnosti napisat ovu klasu da podržava razne tipove objekata.
-    (točke, kvadrate, natpise, kružnice/elipse, povezane točke/poligone, ...)
+class Object():
+    """Nova klasa 'Objekt'.
 
-    Prvo ča rabi delat je odredit tip objekta na temelju atributa.
-    xml_element.attrib -> dict
     """
     def __init__(self, xml_element):
         self.load_layer(xml_element)
+        pass
 
     def load_layer(self, xml_element):
-        self.id = int(xml_element.attrib['id'])
-        self.name = xml_element.attrib['name']
+        """Učitavanje parametara i odrećivanje vrste objekta.
 
-        # trenutno rješavanje problema nepostojećih atributa
-        try:
+        self.vrsta - pokazuje vrstu objekta sa mape.
+        0 - rect
+        1 - point
+        2 - elipse
+        3 - poliline
+        4 - poligone
+        5 - tile
+        6 - text
+        """
+
+        self.id = int(xml_element.attrib['id'])
+
+        #name
+        if 'name' in xml_element.attrib.keys():
+            self.name = xml_element.attrib['name']
+        else:
+            # autoname
+            self.name = '_an{}'.format(self.id)
+
+        # type
+        if 'type' in xml_element.attrib.keys():
             self.type = xml_element.attrib['type']
-        except KeyError:
+        else:
             self.type = 'Primitive'
             print('Upozorenje! Instanciran objekt iz mape bez definiranog tipa.')
 
         x = int(xml_element.attrib['x'])
         y = int(xml_element.attrib['y'])
-        width = int(xml_element.attrib['width'])
-        height = int(xml_element.attrib['height'])
+
+        self.vrsta = 0
+        key = {'rect': 0, 'point': 1, 'ellipse': 2, 'text': 6}
+
+        for element in xml_element:
+            self.vrsta = key[element.tag]
+
+        if self.vrsta in (0, 2, 6):
+            width = int(xml_element.attrib['width'])
+            height = int(xml_element.attrib['height'])
 
         # Zapakiravanje argumenata za jednostavnije stvaranje Rect-a.
         self.rect_arg = (x, y, width, height)
 
-#        for element in xml_element:
-#            if element.tag == 'object':
-##                element.attrib['id']
-#                pass
+        pass
+
+
 

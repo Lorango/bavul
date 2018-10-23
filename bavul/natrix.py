@@ -232,7 +232,13 @@ class Room:
                 s = 'self.instances["{2}"] = {0}(self.game, {1}, "{2}")'
                 s = s.format(objekt.type, objekt.rect_arg, name)
                 print(s)
-                exec(s)
+                try:
+                    exec(s)
+                except NameError as error:
+                    print('Upozorenje! Vjerovatno ne postoji klasa sa tim imenom.')
+                    print('Neće bit instanciran!')
+                    print(s)
+                    print(error)
         pass
 
     def draw(self):
