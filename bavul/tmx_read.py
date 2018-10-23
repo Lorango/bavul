@@ -104,7 +104,7 @@ class Tilemap_layer:
 
 class Object_layer:
     def __init__(self, xml_element):
-        self.objects = {}
+        self.objects = []
         self.load_layer(xml_element)
 #        print(self.objects)
 
@@ -114,8 +114,7 @@ class Object_layer:
 
         for element in xml_element:
             if element.tag == 'object':
-                oo = Object(element)
-                self.objects[oo.name] = oo
+                self.objects.append(Object(element))
 #                element.attrib['id']
                 pass
 
@@ -132,23 +131,17 @@ class Object():
         """Učitavanje parametara i odrećivanje vrste objekta.
 
         self.vrsta - pokazuje vrstu objekta sa mape.
-        0 - rect
-        1 - point
-        2 - elipse
-        3 - poliline
-        4 - poligone
-        5 - tile
-        6 - text
         """
 
+        self.vrsta = 'rect'
         self.id = int(xml_element.attrib['id'])
 
-        #name
+        # name
         if 'name' in xml_element.attrib.keys():
             self.name = xml_element.attrib['name']
         else:
             # autoname
-            self.name = '_an{}'.format(self.id)
+            self.name = ''
 
         # type
         if 'type' in xml_element.attrib.keys():
@@ -157,23 +150,32 @@ class Object():
             self.type = 'Primitive'
             print('Upozorenje! Instanciran objekt iz mape bez definiranog tipa.')
 
+        # Moran promjenit u budućnosti kada buden
+        # implementiral 'custom propertys'
+        for element in xml_element:
+            self.vrsta = element.tag
+
         x = int(xml_element.attrib['x'])
         y = int(xml_element.attrib['y'])
 
-        self.vrsta = 0
-        key = {'rect': 0, 'point': 1, 'ellipse': 2, 'text': 6}
-
-        for element in xml_element:
-            self.vrsta = key[element.tag]
-
-        if self.vrsta in (0, 2, 6):
+        # za budućnost - razdvojit polyline i poligon od point
+        if self.vrsta == 'point' or self.vrsta == 'polyline' or self.vrsta == 'polygon':
+            # namjerno preuvećan. inače 1, 1.
+            width = 10
+            height = 10
+        else:
             width = int(xml_element.attrib['width'])
             height = int(xml_element.attrib['height'])
 
+        # ostavljeno za budućnost kada se bude dorađivalo ove kategorije
+        if self.vrsta == 'rect':
+            pass
+
+        elif self.vrsta == 'ellipse':
+            pass
+
+        elif self.vrsta == 'text':
+            pass
+
         # Zapakiravanje argumenata za jednostavnije stvaranje Rect-a.
         self.rect_arg = (x, y, width, height)
-
-        pass
-
-
-

@@ -195,6 +195,8 @@ class Room:
         self.game = game
         self.name = name
         self.room_path = room_path
+        # jedinstveni broj sljedeće instance u sobi
+        self.jb = 0
 
         # Određuje koja se soba trenutno iscrtava na ekran.
         self.active = False
@@ -225,12 +227,17 @@ class Room:
 
         # Iteracija kroz sve slojeve koje sadrže instance klasa.
         for object_layer in self.tilemap.object_layers:
-            for name, objekt in object_layer.objects.items():
+            for objekt in object_layer.objects:
                 # Određivanje Klase koju će se instancirat.
-                # oko mjesta za varijable koje su string mora bit ""
-                # kako bi se očuvalo njihov tip.
-                s = 'self.instances["{2}"] = {0}(self.game, {1}, "{2}")'
-                s = s.format(objekt.type, objekt.rect_arg, name)
+                if objekt.name == "":
+                    s = 'self.instances[{2}] = {0}(self.game, {1})'
+                    s = s.format(objekt.type, objekt.rect_arg, self.jb)
+                    self.jb += 1
+                else:
+                    # oko mjesta za varijable koje su string mora bit ""
+                    # kako bi se očuvalo njihov tip.
+                    s = 'self.instances["{2}"] = {0}(self.game, {1})'
+                    s = s.format(objekt.type, objekt.rect_arg, objekt.name)
                 print(s)
                 try:
                     exec(s)
@@ -263,14 +270,13 @@ class Primitive:
     """Instanca klase.
 
     """
-    def __init__(self, game, rect_arg=(200, 200, 200, 200), name='test'):
+    def __init__(self, game, rect_arg=(200, 200, 200, 200)):
         """Primitivna inicijalizacija objekta.
 
         """
 
         self.game = game
 
-        self.name = name
         self.rect = pygame.Rect(rect_arg)
         pass
 
