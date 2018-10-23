@@ -118,13 +118,28 @@ class Object_layer:
 #                element.attrib['id']
                 pass
 
+
 class Object:
+    """
+    U budućnosti napisat ovu klasu da podržava razne tipove objekata.
+    (točke, kvadrate, natpise, kružnice/elipse, povezane točke/poligone, ...)
+
+    Prvo ča rabi delat je odredit tip objekta na temelju atributa.
+    xml_element.attrib -> dict
+    """
     def __init__(self, xml_element):
         self.load_layer(xml_element)
 
     def load_layer(self, xml_element):
         self.id = int(xml_element.attrib['id'])
         self.name = xml_element.attrib['name']
+
+        # trenutno rješavanje problema nepostojećih atributa
+        try:
+            self.type = xml_element.attrib['type']
+        except KeyError:
+            self.type = 'Primitive'
+            print('Upozorenje! Instanciran objekt iz mape bez definiranog tipa.')
 
         x = int(xml_element.attrib['x'])
         y = int(xml_element.attrib['y'])

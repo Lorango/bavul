@@ -225,9 +225,14 @@ class Room:
 
         # Iteracija kroz sve slojeve koje sadrže instance klasa.
         for object_layer in self.tilemap.object_layers:
-            for name, _object in object_layer.objects.items():
-                self.instances[name] = Primitive(self.game, _object.rect_arg, name)
-                print(_object.rect_arg)
+            for name, objekt in object_layer.objects.items():
+                # Određivanje Klase koju će se instancirat.
+                # oko mjesta za varijable koje su string mora bit ""
+                # kako bi se očuvalo njihov tip.
+                s = 'self.instances["{2}"] = {0}(self.game, {1}, "{2}")'
+                s = s.format(objekt.type, objekt.rect_arg, name)
+                print(s)
+                exec(s)
         pass
 
     def draw(self):
@@ -273,6 +278,20 @@ class Primitive:
         # crtanje sebe
         # Nacrtaj pravokutnik. (Najjednostavnije iscrtavanje).
         pygame.draw.rect(surface_input, (250, 50, 250), self.rect)
+        pass
+
+
+class Kumpir(Primitive):
+    def draw(self):
+        """Primitivno crtanje na ekran.
+        Alternativna funkcija
+        """
+        # skraćivanje naziva
+        surface_input = self.game.surface_input
+
+        # crtanje sebe
+        # Nacrtaj pravokutnik. (Najjednostavnije iscrtavanje).
+        pygame.draw.rect(surface_input, (250, 50, 50), self.rect)
         pass
 
 
