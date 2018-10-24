@@ -76,5 +76,4 @@ def crawl_2(folder_name):
 
             # Pakiranje pune putanje do modula.
             paths.append(path)
-            print(path)
     return paths

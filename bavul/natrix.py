@@ -239,7 +239,15 @@ class Room:
                     _type = 'bavul.primitive.Primitive'
                     print('Upozorenje! Objekt iz mape bez definiranog tipa.')
                 else:
-                    _type = objekt.type
+                    # Podrška za puno i skraćeno ime klase u modulu bavul.
+                    # '*' se koristi kako zamjena za bavul.classes.
+                    # npr: bavul.classes.mrkva.Mrkva postaje *mrkva.Mrkva
+                    if objekt.type[0] == '*':
+                        # kratki
+                        _type = 'bavul.classes.' + objekt.type[1:]
+                    else:
+                        # dugi (Ovo je originalni način).
+                        _type = objekt.type
 
                 # oko mjesta za varijable koje su string mora bit ""
                 # kako bi se očuvalo njihov tip.
