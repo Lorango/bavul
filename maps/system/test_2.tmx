@@ -6,7 +6,7 @@
   <object id="23" name="eee" x="22" y="78" width="30" height="46">
    <ellipse/>
   </object>
-  <object id="26" name="aw" type="Kumpir" x="79" y="13" width="83" height="19">
+  <object id="26" name="aw" type="bavul.classes.system.test.Kumpir" x="79" y="13" width="83" height="19">
    <text wrap="1">Hello World</text>
   </object>
   <object id="30" x="114" y="82">

@@ -11,7 +11,9 @@ import pygame
 import pygame.locals
 
 import bavul.tmx_read
+import bavul.primitive
 
+import bavul.classes.system.test
 
 class Game:
     """Igra.
@@ -232,7 +234,7 @@ class Room:
                 # Provjera tipa.
                 # Određivanje Klase koju će se instancirat
                 if objekt.type is None:
-                    _type = 'Primitive'
+                    _type = 'bavul.primitive.Primitive'
                     print('Upozorenje! Objekt iz mape bez definiranog tipa.')
                 else:
                     _type = objekt.type
@@ -245,8 +247,6 @@ class Room:
                 try:
                     exec(s)
                 except NameError as error:
-                    print('Upozorenje! Ne postoji klasa sa tim imenom.')
-                    print('Neće bit instanciran!')
                     print(s)
                     print(error)
 
@@ -265,44 +265,6 @@ class Room:
             # Iscrtaj instance u sobi.
             for _, instance in self.instances.items():
                 instance.draw()
-
-
-class Primitive:
-    """Instanca klase.
-
-    """
-    def __init__(self, game, rect_arg=(200, 200, 200, 200)):
-        """Primitivna inicijalizacija objekta.
-
-        """
-
-        self.game = game
-
-        self.rect = pygame.Rect(rect_arg)
-
-    def draw(self):
-        """Primitivno crtanje na ekran.
-
-        """
-        # skraćivanje naziva
-        surface_input = self.game.surface_input
-
-        # crtanje sebe
-        # Nacrtaj pravokutnik. (Najjednostavnije iscrtavanje).
-        pygame.draw.rect(surface_input, (250, 50, 250), self.rect)
-
-
-class Kumpir(Primitive):
-    def draw(self):
-        """Primitivno crtanje na ekran.
-        Alternativna funkcija
-        """
-        # skraćivanje naziva
-        surface_input = self.game.surface_input
-
-        # crtanje sebe
-        # Nacrtaj pravokutnik. (Najjednostavnije iscrtavanje).
-        pygame.draw.rect(surface_input, (250, 50, 50), self.rect)
 
 
 def crawl(folder_name):
