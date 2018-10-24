@@ -5,15 +5,17 @@ Created on Fri Sep 28 13:54:49 2018
 @author: Lorango
 """
 
-import os
-
 import pygame
 import pygame.locals
 
+import bavul.tools as tools
 import bavul.tmx_read
 import bavul.primitive
 
-import bavul.classes.system.test
+
+for modul in tools.crawl_2('bavul\\classes'):
+    exec('import {}'.format(modul))
+
 
 class Game:
     """Igra.
@@ -126,15 +128,15 @@ class Game:
         """
 
         # učitavanje svih soba.
-        for name, path in crawl('maps'):
+        for name, path in tools.crawl('maps'):
             self.rooms[name] = Room(self, path, name)
 
         # učitavanje svih tileset-ova. (Neće se na ov način učitavat)
-        for name, path in crawl('tilesets'):
+        for name, path in tools.crawl('tilesets'):
             pass
 
         # učitavanje svih slika. (Neće se na ov način učitavat)
-        for name, path in crawl('images'):
+        for name, path in tools.crawl('images'):
             pass
 
 
@@ -249,6 +251,9 @@ class Room:
                 except NameError as error:
                     print(s)
                     print(error)
+                except AttributeError as error:
+                    print(s)
+                    print(error)
 
     def draw(self):
         """Funkcija za ...
@@ -265,32 +270,3 @@ class Room:
             # Iscrtaj instance u sobi.
             for _, instance in self.instances.items():
                 instance.draw()
-
-
-def crawl(folder_name):
-    """Pronađi sve fajlove u direktoriju.
-
-    """
-
-    # Lista koja će spremat zapakirane putanje do file-ova.
-    paths = []
-
-    # Spajanje temeljnog puta pomoću trenutno radnog puta i foldera kojeg se
-    # želi pretraživat.
-    parent_path = os.path.join(os.getcwd(), folder_name)
-
-    # Pretraživanje putanje za file-ovima. (Imena foldera me ne zanimaju "_").
-    for dir_path, _, file_names in os.walk(parent_path):
-
-        # Iteracija kroz sve pronađene datoteke.
-        for file in file_names:
-
-            # Stvaranje apsolutne putanje do file-a.
-            full_path = os.path.join(dir_path, file)
-
-            # Samo ime file-a bez nastavka.
-            short_file_name = file.split('.')[0]
-
-            # Pakiranje imena file-a i njegovoe pune putanje.
-            paths.append((short_file_name, full_path))
-    return paths

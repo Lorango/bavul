@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#d67e40" nextlayerid="11" nextobjectid="39">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#d67e40" nextlayerid="11" nextobjectid="40">
  <tileset firstgid="1" source="../../tilesets/pokemon_test_1.tsx"/>
  <objectgroup id="3" name="Object Layer 1">
   <object id="22" x="23" y="9" width="35" height="47"/>
-  <object id="23" name="eee" x="22" y="78" width="30" height="46">
+  <object id="23" name="eee" type="bavul.classes.system.test.Salata" x="22" y="78" width="30" height="46">
    <ellipse/>
   </object>
   <object id="26" name="aw" type="bavul.classes.system.test.Kumpir" x="79" y="13" width="83" height="19">
@@ -18,5 +18,6 @@
   <object id="32" x="88" y="62">
    <point/>
   </object>
+  <object id="39" type="bavul.classes.mrkva.Mrkva" x="18" y="214" width="35" height="110"/>
  </objectgroup>
 </map>
