@@ -173,14 +173,13 @@ class Object():
             self.name = xml_element.attrib['name']
         else:
             # autoname
-            self.name = ''
+            self.name = None
 
         # type
         if 'type' in xml_element.attrib.keys():
             self.type = xml_element.attrib['type']
         else:
-            self.type = 'Primitive'
-            print('Upozorenje! Instanciran objekt iz mape bez definiranog tipa.')
+            self.type = None
 
         # Moran promjenit u budućnosti kada buden
         # implementiral 'custom propertys'

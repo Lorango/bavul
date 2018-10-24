@@ -222,20 +222,30 @@ class Room:
         # Iteracija kroz sve slojeve koje sadrže instance klasa.
         for object_layer in self.tilemap.object_layers:
             for objekt in object_layer.objects:
-                # Određivanje Klase koju će se instancirat.
-                if objekt.name == "":
-                    s = 'self.instances[{2}] = {0}(self.game, {1})'
-                    s = s.format(objekt.type, objekt.rect_arg, self.jb)
+                # Provjera imena.
+                if objekt.name is None:
+                    name = self.jb
                     self.jb += 1
                 else:
-                    # oko mjesta za varijable koje su string mora bit ""
-                    # kako bi se očuvalo njihov tip.
-                    s = 'self.instances["{2}"] = {0}(self.game, {1})'
-                    s = s.format(objekt.type, objekt.rect_arg, objekt.name)
+                    name = objekt.name
+
+                # Provjera tipa.
+                # Određivanje Klase koju će se instancirat
+                if objekt.type is None:
+                    _type = 'Primitive'
+                    print('Upozorenje! Objekt iz mape bez definiranog tipa.')
+                else:
+                    _type = objekt.type
+
+                # oko mjesta za varijable koje su string mora bit ""
+                # kako bi se očuvalo njihov tip.
+                s = 'self.instances["{2}"] = {0}(self.game, {1})'
+                s = s.format(_type, objekt.rect_arg, name)
+
                 try:
                     exec(s)
                 except NameError as error:
-                    print('Upozorenje! Vjerovatno ne postoji klasa sa tim imenom.')
+                    print('Upozorenje! Ne postoji klasa sa tim imenom.')
                     print('Neće bit instanciran!')
                     print(s)
                     print(error)
