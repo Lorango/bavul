@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#d67e40" nextlayerid="5" nextobjectid="32">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#d67e40" nextlayerid="11" nextobjectid="39">
  <tileset firstgid="1" source="../../tilesets/pokemon_test_1.tsx"/>
  <objectgroup id="3" name="Object Layer 1">
   <object id="22" x="23" y="9" width="35" height="47"/>
@@ -14,6 +14,9 @@
   </object>
   <object id="31" x="139" y="71">
    <polygon points="0,0 15,35 9,-1"/>
+  </object>
+  <object id="32" x="88" y="62">
+   <point/>
   </object>
  </objectgroup>
 </map>
