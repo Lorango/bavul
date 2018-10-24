@@ -12,6 +12,7 @@ import pygame.locals
 
 import bavul.tmx_read
 
+
 class Game:
     """Igra.
 
@@ -50,13 +51,11 @@ class Game:
         self.camera = Camera(self)
 
         # Testni kod.
-        print('Fos.')
         self.images['test'] = pygame.image.load('images/tilesets/xxx.png')
 
         self.load_resurces()
         self.active_rooms['test_2'] = self.rooms['test_2']
         self.active_rooms['test_2'].active = True
-        pass
 
     def main_loop(self):
         """Funkcija - glavna petlja.
@@ -83,10 +82,8 @@ class Game:
 
                 # step event u sustavu soba
                 for _, room in self.active_rooms.items():
-#                    print(room)
                     for _, instance in room.instances.items():
-                        print('ko')
-                    pass
+                        pass
 
             # Pozivanje vlastite draw metod za crtanje.
             self.draw()
@@ -99,16 +96,9 @@ class Game:
         # Testno ispunjavanje ekrana žutom bojom.
         self.surface_input.fill((250, 250, 50))
 
-        # Testno ispunjavanje ekrana testnim slikama skalirani raznim metodama.
-        # self.screen_input.blit(pygame.transform.smoothscale(self.images['test'], (100, 100)), (300, 300))
-        # self.screen_input.blit(pygame.transform.scale2x(self.images['test']), (0, 0))
-        # self.screen_input.blit(self.images['test'], (0, 0))
-
         # Crtanje sobe
         for _, room in self.active_rooms.items():
-            if room.active:
-                room.draw()
-
+            room.draw()
 
         # Primjena filtara, kamere i crtanje na screen_output.
 
@@ -117,7 +107,6 @@ class Game:
         self.surface_output.fill((250, 250, 250))
 
         # Primjena filtera. (Rezervirano područje)
-
 
         # Primjena kamere
         if self.camera is None:
@@ -128,7 +117,6 @@ class Game:
         # Osvježavanje cjelokupnog ekrana
         pygame.display.flip()
         pass
-
 
     def load_resurces(self):
         """Metoda za učitavanje svih vanjskih file-ova.
@@ -146,7 +134,6 @@ class Game:
         # učitavanje svih slika. (Neće se na ov način učitavat)
         for name, path in crawl('images'):
             pass
-        pass
 
 
 class Camera:
@@ -159,19 +146,14 @@ class Camera:
         Objekt kamere. Podržava translaciju kamere i skaliranje.
 
         """
+
+        self.game = game
+
         # Ako nije zadana veličina uzima se veličina ulaznog surface-a.
         if size is None:
             size = game.surface_input.get_size()
 
-        self.game = game
-
         self.rect = pygame.Rect(0, 0, *size)
-        # self.surface_input = game.surface_input
-        # self.surface_output = game.surface_output
-
-        # testni primjer pomicanja kamere
-        # self.rect.move_ip(-16, -16)
-        pass
 
     def draw(self):
         """Funkcija za crtanje po ekranu.
@@ -194,7 +176,6 @@ class Camera:
 
         # Izravno modificiranje izlaznoga surface-a.
         surface_output.blit(source, (50, 50))
-        pass
 
 
 class Room:
@@ -205,32 +186,69 @@ class Room:
         """Inicijalizacija sobe.
 
         """
+
+        self.game = game
+        self.name = name
+        self.room_path = room_path
+        # jedinstveni broj sljedeće instance u sobi
+        self.jb = 0
+
+        # Određuje koja se soba trenutno iscrtava na ekran.
         self.active = False
 
-        self.name = name
-        self.game = game
-        self.room_path = room_path
-
+        # Tilemap instanca.
         self.tilemap = None
+
+        # Sadržava instancirane klase u igri.
         self.instances = {}
 
+        # Testni kod
+        # Učitaj podatke o mapi. [PH]-Mapa se nebi trebala odmah učitat
         self.load_map()
-        pass
 
     def load_map(self):
         """Učitavanje osnovnih podataka o mapi.
+        i
+        Inicijalizacija objekata u mapi.
 
         """
+
+        # Dodaj sebe u listu aktivnih soba.
         self.game.active_rooms[self.name] = self
+
+        # učitaj podatke o mapi
         self.tilemap = bavul.tmx_read.Tilemap(self.room_path)
-        pass
 
-    def init_map(self):
-        """Inicijalizacija objekata u mapi.
+        # Iteracija kroz sve slojeve koje sadrže instance klasa.
+        for object_layer in self.tilemap.object_layers:
+            for objekt in object_layer.objects:
+                # Provjera imena.
+                if objekt.name is None:
+                    name = self.jb
+                    self.jb += 1
+                else:
+                    name = objekt.name
 
-        """
+                # Provjera tipa.
+                # Određivanje Klase koju će se instancirat
+                if objekt.type is None:
+                    _type = 'Primitive'
+                    print('Upozorenje! Objekt iz mape bez definiranog tipa.')
+                else:
+                    _type = objekt.type
 
-        pass
+                # oko mjesta za varijable koje su string mora bit ""
+                # kako bi se očuvalo njihov tip.
+                s = 'self.instances["{2}"] = {0}(self.game, {1})'
+                s = s.format(_type, objekt.rect_arg, name)
+
+                try:
+                    exec(s)
+                except NameError as error:
+                    print('Upozorenje! Ne postoji klasa sa tim imenom.')
+                    print('Neće bit instanciran!')
+                    print(s)
+                    print(error)
 
     def draw(self):
         """Funkcija za ...
@@ -238,32 +256,79 @@ class Room:
         """
         # skraćivanje naziva
         surface_input = self.game.surface_input
-#        images = self.game.images
-#
-        # Testno crtanje pravokutnika plavom bojom.
-        pygame.draw.rect(surface_input, (50, 50, 250), (100, 100, 100, 100))
-#
-#        # Testno ispunjavanje ekrana testnim slikama skalirani raznim metodama.
-#        surface_input.blit(images['test'], (0, 0))
-        pass
+
+        # Da li se ova soba iscrtava na ekranu.
+        if self.active:
+            # Testno crtanje pravokutnika plavom bojom.
+            pygame.draw.rect(surface_input, (50, 50, 250), (90, 90, 90, 90))
+
+            # Iscrtaj instance u sobi.
+            for _, instance in self.instances.items():
+                instance.draw()
+
+
+class Primitive:
+    """Instanca klase.
+
+    """
+    def __init__(self, game, rect_arg=(200, 200, 200, 200)):
+        """Primitivna inicijalizacija objekta.
+
+        """
+
+        self.game = game
+
+        self.rect = pygame.Rect(rect_arg)
+
+    def draw(self):
+        """Primitivno crtanje na ekran.
+
+        """
+        # skraćivanje naziva
+        surface_input = self.game.surface_input
+
+        # crtanje sebe
+        # Nacrtaj pravokutnik. (Najjednostavnije iscrtavanje).
+        pygame.draw.rect(surface_input, (250, 50, 250), self.rect)
+
+
+class Kumpir(Primitive):
+    def draw(self):
+        """Primitivno crtanje na ekran.
+        Alternativna funkcija
+        """
+        # skraćivanje naziva
+        surface_input = self.game.surface_input
+
+        # crtanje sebe
+        # Nacrtaj pravokutnik. (Najjednostavnije iscrtavanje).
+        pygame.draw.rect(surface_input, (250, 50, 50), self.rect)
+
 
 def crawl(folder_name):
     """Pronađi sve fajlove u direktoriju.
 
     """
-#    print(os.getcwd())
 
+    # Lista koja će spremat zapakirane putanje do file-ova.
     paths = []
+
+    # Spajanje temeljnog puta pomoću trenutno radnog puta i foldera kojeg se
+    # želi pretraživat.
     parent_path = os.path.join(os.getcwd(), folder_name)
+
+    # Pretraživanje putanje za file-ovima. (Imena foldera me ne zanimaju "_").
     for dir_path, _, file_names in os.walk(parent_path):
+
+        # Iteracija kroz sve pronađene datoteke.
         for file in file_names:
+
+            # Stvaranje apsolutne putanje do file-a.
             full_path = os.path.join(dir_path, file)
-            print(full_path)
 
-            # samo ime file-a bez nastavka
+            # Samo ime file-a bez nastavka.
             short_file_name = file.split('.')[0]
-#            print(short_file_name)
 
-#            print(file)
+            # Pakiranje imena file-a i njegovoe pune putanje.
             paths.append((short_file_name, full_path))
-    return(paths)
+    return paths
