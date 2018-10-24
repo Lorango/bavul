@@ -56,7 +56,6 @@ class Game:
         self.load_resurces()
         self.active_rooms['test_2'] = self.rooms['test_2']
         self.active_rooms['test_2'].active = True
-        pass
 
     def main_loop(self):
         """Funkcija - glavna petlja.
@@ -85,7 +84,6 @@ class Game:
                 for _, room in self.active_rooms.items():
                     for _, instance in room.instances.items():
                         pass
-                    pass
 
             # Pozivanje vlastite draw metod za crtanje.
             self.draw()
@@ -136,7 +134,6 @@ class Game:
         # učitavanje svih slika. (Neće se na ov način učitavat)
         for name, path in crawl('images'):
             pass
-        pass
 
 
 class Camera:
@@ -157,7 +154,6 @@ class Camera:
             size = game.surface_input.get_size()
 
         self.rect = pygame.Rect(0, 0, *size)
-        pass
 
     def draw(self):
         """Funkcija za crtanje po ekranu.
@@ -180,7 +176,6 @@ class Camera:
 
         # Izravno modificiranje izlaznoga surface-a.
         surface_output.blit(source, (50, 50))
-        pass
 
 
 class Room:
@@ -210,7 +205,6 @@ class Room:
         # Testni kod
         # Učitaj podatke o mapi. [PH]-Mapa se nebi trebala odmah učitat
         self.load_map()
-        pass
 
     def load_map(self):
         """Učitavanje osnovnih podataka o mapi.
@@ -238,7 +232,6 @@ class Room:
                     # kako bi se očuvalo njihov tip.
                     s = 'self.instances["{2}"] = {0}(self.game, {1})'
                     s = s.format(objekt.type, objekt.rect_arg, objekt.name)
-                print(s)
                 try:
                     exec(s)
                 except NameError as error:
@@ -246,7 +239,6 @@ class Room:
                     print('Neće bit instanciran!')
                     print(s)
                     print(error)
-        pass
 
     def draw(self):
         """Funkcija za ...
@@ -263,7 +255,6 @@ class Room:
             # Iscrtaj instance u sobi.
             for _, instance in self.instances.items():
                 instance.draw()
-        pass
 
 
 class Primitive:
@@ -278,7 +269,6 @@ class Primitive:
         self.game = game
 
         self.rect = pygame.Rect(rect_arg)
-        pass
 
     def draw(self):
         """Primitivno crtanje na ekran.
@@ -290,7 +280,6 @@ class Primitive:
         # crtanje sebe
         # Nacrtaj pravokutnik. (Najjednostavnije iscrtavanje).
         pygame.draw.rect(surface_input, (250, 50, 250), self.rect)
-        pass
 
 
 class Kumpir(Primitive):
@@ -304,7 +293,6 @@ class Kumpir(Primitive):
         # crtanje sebe
         # Nacrtaj pravokutnik. (Najjednostavnije iscrtavanje).
         pygame.draw.rect(surface_input, (250, 50, 50), self.rect)
-        pass
 
 
 def crawl(folder_name):

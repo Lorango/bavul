@@ -10,17 +10,22 @@ import numpy as np
 
 
 class Tilemap:
+    """Sadržava podatke o mapi.
+
+    """
     def __init__(self, path):
+        """Inicijalizacija
+
+        """
         self.tilesets = []  # (tilest_ref, firstgid)
         self.layers = []
         self.object_layers = []
         self.load(path)
 
-#        print(self.tilesets)
-#        print(self.layers)
-
     def load(self, path):
-#        print(path)
+        """Učitavanje mape
+
+        """
         tree = et.parse(path)
         root = tree.getroot()
 
@@ -45,17 +50,25 @@ class Tilemap:
 
 
 class Tileset:
+    """Sadržava podatke o tilesetu.
+
+    """
     def __init__(self, xml_element):
+        """Inicijalizacija
+
+        """
         self.load(xml_element)
 
     def load(self, xml_element):
+        """Učitavanje tileseta
+
+        """
         path_ = xml_element.attrib['source']
         # uredivanje putanje [PH] U butućnosti promjenit.
         if path_[0] == '.':
             # zanemari u putnji "../" i na početak dodaj "maps/"
             path = 'maps/' + path_[3:]
 
-#        print(path)
         tree = et.parse(path)
         root = tree.getroot()
 
@@ -69,14 +82,22 @@ class Tileset:
                 if child.attrib['source'][0] == '.':
                     # zanemari u putnji "../"
                     self.image_source = child.attrib['source'][3:]
-#        print(self.image_source)
 
 
 class Tilemap_layer:
+    """Sadržava podatke o sloju pločica (tile leyer).
+
+    """
     def __init__(self, xml_element):
+        """Inicijalizacija
+
+        """
         self.load_layer(xml_element)
 
     def load_layer(self, xml_element):
+        """učitavanje podataka o tile sloju
+
+        """
         self.id = int(xml_element.attrib['id'])
         self.name = xml_element.attrib['name']
         self.width = int(xml_element.attrib['width'])
@@ -90,6 +111,9 @@ class Tilemap_layer:
                     print('Greska! Nerazumin enkoding podataka u mapi')
 
     def data_edit(self, data_raw):
+        """Uređivanje učitanih podataka da postanu numpy array.
+
+        """
         data_list_int = []
         data_list_str = data_raw.split(',')
 
@@ -99,33 +123,41 @@ class Tilemap_layer:
 
         self.data = np.reshape(np.array(data_list_int),
                                [self.width, self.height])
-#        print(self.data)
 
 
 class Object_layer:
+    """Sadržava informacije o sloju i objektima u njemu.
+
+    """
     def __init__(self, xml_element):
+        """Inicijalizacija
+
+        """
         self.objects = []
         self.load_layer(xml_element)
-#        print(self.objects)
 
     def load_layer(self, xml_element):
+        """Inicijalizacija učitavanje sloja i njegovih objekata
+
+        """
         self.id = int(xml_element.attrib['id'])
         self.name = xml_element.attrib['name']
 
         for element in xml_element:
             if element.tag == 'object':
                 self.objects.append(Object(element))
-#                element.attrib['id']
-                pass
 
 
 class Object():
-    """Nova klasa 'Objekt'.
+    """Sadrži podatke o objektu u sloju na mapi
+    Nova klasa 'Objekt'.
 
     """
     def __init__(self, xml_element):
+        """Inicijalizacija
+
+        """
         self.load_layer(xml_element)
-        pass
 
     def load_layer(self, xml_element):
         """Učitavanje parametara i odrećivanje vrste objekta.
