@@ -77,3 +77,55 @@ def crawl_2(folder_name):
             # Pakiranje pune putanje do modula.
             paths.append(path)
     return paths
+
+
+def ns_sintax(ns_string):
+    """Podrška za puno i skraćeno ime klase u modulu bavul.
+    '*' se koristi kako zamjena za "bavul.classes."
+    npr:Mesto da se piše:
+        bavul.classes.system.mrkva.Mrkva
+
+    dosta je napisat:
+        *.system.mrkva.Mrkva
+
+    Ili još kraće:
+        **.system.mrkva
+
+    Ukoliko se želi instanirat klasu "Mrkva" iz datoteke "mrkva.py" u
+    folderu/submodulu system.
+
+    """
+
+    name_list = ns_string.split('.')
+    prefix = 'bavul.classes.'
+
+    # Provjera sintakse za skraćivanje.
+    # Za super kratki oblik.
+    if name_list[0] == '**':
+        # Određivanje imena klase na temulu imena file-a/modula u namespace-u.
+        class_name = name_list[-1].capitalize()
+
+        # Rekonstrukcija namespace-a bez oznaka za skraćivanje.
+        path = '.'.join(name_list[1:])
+
+        # Stvaranje potpunog imena klase s namespace-on.
+        full_name = '{}{}.{}'.format(prefix, path, class_name)
+
+    # Za kratki oblik.
+    elif name_list[0] == '*':
+        # Rekonstrukcija namespace-a bez oznaka za skraćivanje.
+        path = '.'.join(name_list[1:])
+
+        # Stvaranje potpunog imena klase s namespace-on.
+        full_name = '{}{}'.format(prefix, path)
+
+    # Za potpuni oblik.
+    elif name_list[0] == 'bavul':
+        # Već se koristi puni oblik, pa se on samo prosljeđuje.
+        full_name = ns_string
+
+    # Za slučaj neispravne sintakse.
+    else:
+        print('Sintaksa ni dobra.', ns_string)
+
+    return full_name
