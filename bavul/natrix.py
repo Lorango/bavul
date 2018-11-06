@@ -42,7 +42,11 @@ class Game:
         self.rooms = {}
 
         # Dictionary koji sadržava sve aktivne sobe. (Inicializirani objekti)
+        # Samo aktivna soba prima unos od tipkovnice, miša itd.
         self.active_rooms = {}
+
+        # Aktivna soba. Crta se na ekran i prima ulaze od tipkovvnice
+        self.active_room = None
 
         # Dictionary koji sadržava sve surface-e koje se učita.
         self.images = {}
@@ -59,7 +63,7 @@ class Game:
 
         self.load_resurces()
         self.active_rooms['test_2'] = self.rooms['test_2']
-        self.active_rooms['test_2'].active = True
+        self.active_room = self.active_rooms['test_2']
 
     def main_loop(self):
         """Funkcija - glavna petlja.
@@ -84,10 +88,36 @@ class Game:
                             pass
                         swich = not swich
 
-                # step event u sustavu soba
-                for _, room in self.active_rooms.items():
-                    for _, instance in room.instances.items():
-                        pass
+                if event.type == pygame.KEYDOWN:
+#                    print(event)
+                    if event.unicode == 'd':
+                        for _, instance in self.active_room.instances.items():
+#                            instance.test()
+                            pass
+
+            # key pressed
+            if pygame.key.get_pressed()[pygame.K_a]:
+               for _, instance in self.active_room.instances.items():
+                    instance.test_2()
+
+            if pygame.key.get_pressed()[pygame.K_d]:
+                for _, instance in self.active_room.instances.items():
+                    instance.test()
+
+            if pygame.key.get_pressed()[pygame.K_s]:
+                for _, instance in self.active_room.instances.items():
+                    instance.test_3()
+
+            if pygame.key.get_pressed()[pygame.K_w]:
+                for _, instance in self.active_room.instances.items():
+                    instance.test_4()
+
+            # step event u sustavu soba
+            for _, room in self.active_rooms.items():
+
+                # step u pojedinoj sobi
+                for _, instance in room.instances.items():
+                    pass
 
             # Pozivanje vlastite draw metod za crtanje.
             self.draw()
@@ -101,8 +131,7 @@ class Game:
         self.surface_input.fill((250, 250, 50))
 
         # Crtanje sobe
-        for _, room in self.active_rooms.items():
-            room.draw()
+        self.active_room.draw()
 
         # Primjena filtara, kamere i crtanje na screen_output.
 
@@ -197,9 +226,6 @@ class Room:
         # jedinstveni broj sljedeće instance u sobi
         self.jb = 0
 
-        # Određuje koja se soba trenutno iscrtava na ekran.
-        self.active = False
-
         # Tilemap instanca.
         self.tilemap = None
 
@@ -260,14 +286,7 @@ class Room:
         """Funkcija za ...
 
         """
-        # skraćivanje naziva
-        surface_input = self.game.surface_input
 
-        # Da li se ova soba iscrtava na ekranu.
-        if self.active:
-            # Testno crtanje pravokutnika plavom bojom.
-            pygame.draw.rect(surface_input, (50, 50, 250), (90, 90, 90, 90))
-
-            # Iscrtaj instance u sobi.
-            for _, instance in self.instances.items():
-                instance.draw()
+        # Iscrtaj instance u sobi.
+        for _, instance in self.instances.items():
+            instance.draw()

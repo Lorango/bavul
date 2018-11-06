@@ -31,3 +31,15 @@ class Primitive:
         # crtanje sebe
         # Nacrtaj pravokutnik. (Najjednostavnije iscrtavanje).
         pygame.draw.rect(surface_input, (250, 50, 250), self.rect)
+
+    def test(self):
+        self.rect.move_ip(2, 0)
+
+    def test_2(self):
+        self.rect.move_ip(-2, 0)
+
+    def test_3(self):
+        self.rect.move_ip(0, 2)
+
+    def test_4(self):
+        self.rect.move_ip(0, -2)
