@@ -89,11 +89,39 @@ class Game:
                         swich = not swich
 
                 if event.type == pygame.KEYDOWN:
-#                    print(event)
-                    if event.unicode == 'd':
-                        for _, instance in self.active_room.instances.items():
-#                            instance.test()
-                            pass
+                    # Iteriraj kroz sve definirane tipke na tipkovnici.
+                    for key, code in tools.key_codes.items():
+                        # Provjeri ako je tipka x trenutno stisnuta.
+                        if event.key == code:
+                            # Ako je iteriraj sve instance u aktivnoj sobi.
+                            for _, instance in self.active_room.instances.items():
+                                # Izvuci roditeljske klase od svake instance.
+                                # Prvo se sa type() odredi klasa instance onda se toj
+                                # klasi odrede roditeljske klase. To je provjera jer
+                                # nemoraju sve instance imat definirane metode za
+                                # keyboard handling.
+                                base_classes = type(instance).__bases__
+                                if bavul.primitive.Key_down in base_classes:
+                                    command = 'instance.{}_down()'.format(key)
+                                    exec(command)
+
+                if event.type == pygame.KEYUP:
+                    # Iteriraj kroz sve definirane tipke na tipkovnici.
+                    for key, code in tools.key_codes.items():
+                        # Provjeri ako je tipka x trenutno stisnuta.
+                        if event.key == code:
+                            # Ako je iteriraj sve instance u aktivnoj sobi.
+                            for _, instance in self.active_room.instances.items():
+                                # Izvuci roditeljske klase od svake instance.
+                                # Prvo se sa type() odredi klasa instance onda se toj
+                                # klasi odrede roditeljske klase. To je provjera jer
+                                # nemoraju sve instance imat definirane metode za
+                                # keyboard handling.
+                                base_classes = type(instance).__bases__
+                                if bavul.primitive.Key_up in base_classes:
+                                    command = 'instance.{}_up()'.format(key)
+                                    exec(command)
+
 
             # key pressed
             # Ako bude potrebe generirat ću kod za svaku tipku kako i u klasi,
@@ -112,8 +140,8 @@ class Game:
                         # nemoraju sve instance imat definirane metode za
                         # keyboard handling.
                         base_classes = type(instance).__bases__
-                        if bavul.primitive.Keyboard_input in base_classes:
-                            command = 'instance.{}()'.format(key)
+                        if bavul.primitive.Key_pressed in base_classes:
+                            command = 'instance.{}_pressed()'.format(key)
                             exec(command)
 
             # step event u sustavu soba
