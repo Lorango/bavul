@@ -96,14 +96,25 @@ class Game:
                             pass
 
             # key pressed
-            # Za vidit koja se komanda izvršava vidi varijablu
-            # "command_key_pressed" u bavul.tools
             # Ako bude potrebe generirat ću kod za svaku tipku kako i u klasi,
             # ali to samo ako bude rabilo za optimizacije jer u ovom stadiju
             # bi to samo zakrčilo skriptu.
+
+            # Iteriraj kroz sve definirane tipke na tipkovnici.
             for key, code in tools.key_codes.items():
-                command = tools.command_key_pressed.format(code, key)
-                exec(command)
+                # Provjeri ako je tipka x trenutno stisnuta.
+                if pygame.key.get_pressed()[code]:
+                    # Ako je iteriraj sve instance u aktivnoj sobi.
+                    for _, instance in self.active_room.instances.items():
+                        # Izvuci roditeljske klase od svake instance.
+                        # Prvo se sa type() odredi klasa instance onda se toj
+                        # klasi odrede roditeljske klase. To je provjera jer
+                        # nemoraju sve instance imat definirane metode za
+                        # keyboard handling.
+                        base_classes = type(instance).__bases__
+                        if bavul.primitive.Keyboard_input in base_classes:
+                            command = 'instance.{}()'.format(key)
+                            exec(command)
 
             # step event u sustavu soba
             for _, room in self.active_rooms.items():

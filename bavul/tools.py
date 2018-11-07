@@ -43,14 +43,6 @@ key_codes = {'K_0': 48, 'K_1': 49, 'K_2': 50, 'K_3': 51, 'K_4': 52, 'K_5': 53,
              'K_r': 114, 'K_s': 115, 'K_t': 116, 'K_u': 117, 'K_v': 118,
              'K_w': 119, 'K_x': 120, 'K_y': 121, 'K_z': 122}
 
-# Kod koji provjerava dali je neka ttipka trenutno pretisnuta.
-command_key_pressed = """
-if pygame.key.get_pressed()[pygame.{1}]:
-    for _, instance in self.active_room.instances.items():
-        if bavul.primitive.Keyboard_input in type(instance).__bases__:
-            instance.{1}()
-"""
-
 
 def crawl(folder_name):
     """Pronađi sve fajlove u direktoriju.
