@@ -96,21 +96,14 @@ class Game:
                             pass
 
             # key pressed
-            if pygame.key.get_pressed()[pygame.K_a]:
-               for _, instance in self.active_room.instances.items():
-                    instance.test_2()
-
-            if pygame.key.get_pressed()[pygame.K_d]:
-                for _, instance in self.active_room.instances.items():
-                    instance.test()
-
-            if pygame.key.get_pressed()[pygame.K_s]:
-                for _, instance in self.active_room.instances.items():
-                    instance.test_3()
-
-            if pygame.key.get_pressed()[pygame.K_w]:
-                for _, instance in self.active_room.instances.items():
-                    instance.test_4()
+            # Za vidit koja se komanda izvršava vidi varijablu
+            # "command_key_pressed" u bavul.tools
+            # Ako bude potrebe generirat ću kod za svaku tipku kako i u klasi,
+            # ali to samo ako bude rabilo za optimizacije jer u ovom stadiju
+            # bi to samo zakrčilo skriptu.
+            for key, code in tools.key_codes.items():
+                command = tools.command_key_pressed.format(code, key)
+                exec(command)
 
             # step event u sustavu soba
             for _, room in self.active_rooms.items():

@@ -23,7 +23,7 @@ class Kumpir(primitive.Primitive):
         pygame.draw.rect(surface_input, (250, 50, 50), self.rect)
 
 
-class Salata(primitive.Primitive):
+class Salata(primitive.Primitive, primitive.Keyboard_input):
     def draw(self):
         """Primitivno crtanje na ekran.
         Alternativna funkcija
@@ -34,3 +34,15 @@ class Salata(primitive.Primitive):
         # crtanje sebe
         # Nacrtaj pravokutnik. (Najjednostavnije iscrtavanje).
         pygame.draw.rect(surface_input, (50, 250, 50), self.rect)
+
+    def K_a(self):
+        self.rect.move_ip(-2, 0)
+
+    def K_d(self):
+        self.rect.move_ip(2, 0)
+
+    def K_s(self):
+        self.rect.move_ip(0, 2)
+
+    def K_w(self):
+        self.rect.move_ip(0, -2)
