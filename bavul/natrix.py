@@ -5,12 +5,16 @@ Created on Fri Sep 28 13:54:49 2018
 @author: Lorango
 """
 
-import os
-
 import pygame
 import pygame.locals
 
+import bavul.tools as tools
 import bavul.tmx_read
+import bavul.primitive
+
+
+for modul in tools.crawl_2('bavul\\classes'):
+    exec('import {}'.format(modul))
 
 
 class Game:
@@ -38,7 +42,11 @@ class Game:
         self.rooms = {}
 
         # Dictionary koji sadržava sve aktivne sobe. (Inicializirani objekti)
+        # Samo aktivna soba prima unos od tipkovnice, miša itd.
         self.active_rooms = {}
+
+        # Aktivna soba. Crta se na ekran i prima ulaze od tipkovvnice
+        self.active_room = None
 
         # Dictionary koji sadržava sve surface-e koje se učita.
         self.images = {}
@@ -55,7 +63,7 @@ class Game:
 
         self.load_resurces()
         self.active_rooms['test_2'] = self.rooms['test_2']
-        self.active_rooms['test_2'].active = True
+        self.active_room = self.active_rooms['test_2']
 
     def main_loop(self):
         """Funkcija - glavna petlja.
@@ -80,10 +88,40 @@ class Game:
                             pass
                         swich = not swich
 
-                # step event u sustavu soba
-                for _, room in self.active_rooms.items():
-                    for _, instance in room.instances.items():
-                        pass
+                if event.type == pygame.KEYDOWN:
+#                    print(event)
+                    if event.unicode == 'd':
+                        for _, instance in self.active_room.instances.items():
+#                            instance.test()
+                            pass
+
+            # key pressed
+            # Ako bude potrebe generirat ću kod za svaku tipku kako i u klasi,
+            # ali to samo ako bude rabilo za optimizacije jer u ovom stadiju
+            # bi to samo zakrčilo skriptu.
+
+            # Iteriraj kroz sve definirane tipke na tipkovnici.
+            for key, code in tools.key_codes.items():
+                # Provjeri ako je tipka x trenutno stisnuta.
+                if pygame.key.get_pressed()[code]:
+                    # Ako je iteriraj sve instance u aktivnoj sobi.
+                    for _, instance in self.active_room.instances.items():
+                        # Izvuci roditeljske klase od svake instance.
+                        # Prvo se sa type() odredi klasa instance onda se toj
+                        # klasi odrede roditeljske klase. To je provjera jer
+                        # nemoraju sve instance imat definirane metode za
+                        # keyboard handling.
+                        base_classes = type(instance).__bases__
+                        if bavul.primitive.Keyboard_input in base_classes:
+                            command = 'instance.{}()'.format(key)
+                            exec(command)
+
+            # step event u sustavu soba
+            for _, room in self.active_rooms.items():
+
+                # step u pojedinoj sobi
+                for _, instance in room.instances.items():
+                    pass
 
             # Pozivanje vlastite draw metod za crtanje.
             self.draw()
@@ -97,8 +135,7 @@ class Game:
         self.surface_input.fill((250, 250, 50))
 
         # Crtanje sobe
-        for _, room in self.active_rooms.items():
-            room.draw()
+        self.active_room.draw()
 
         # Primjena filtara, kamere i crtanje na screen_output.
 
@@ -124,15 +161,15 @@ class Game:
         """
 
         # učitavanje svih soba.
-        for name, path in crawl('maps'):
+        for name, path in tools.crawl('maps'):
             self.rooms[name] = Room(self, path, name)
 
         # učitavanje svih tileset-ova. (Neće se na ov način učitavat)
-        for name, path in crawl('tilesets'):
+        for name, path in tools.crawl('tilesets'):
             pass
 
         # učitavanje svih slika. (Neće se na ov način učitavat)
-        for name, path in crawl('images'):
+        for name, path in tools.crawl('images'):
             pass
 
 
@@ -193,9 +230,6 @@ class Room:
         # jedinstveni broj sljedeće instance u sobi
         self.jb = 0
 
-        # Određuje koja se soba trenutno iscrtava na ekran.
-        self.active = False
-
         # Tilemap instanca.
         self.tilemap = None
 
@@ -232,10 +266,11 @@ class Room:
                 # Provjera tipa.
                 # Određivanje Klase koju će se instancirat
                 if objekt.type is None:
-                    _type = 'Primitive'
+                    _type = 'bavul.primitive.Primitive'
                     print('Upozorenje! Objekt iz mape bez definiranog tipa.')
                 else:
-                    _type = objekt.type
+                    # Podrška za puno i skraćeno ime klase u modulu bavul.
+                    _type = tools.ns_sintax(objekt.type)
 
                 # oko mjesta za varijable koje su string mora bit ""
                 # kako bi se očuvalo njihov tip.
@@ -245,8 +280,9 @@ class Room:
                 try:
                     exec(s)
                 except NameError as error:
-                    print('Upozorenje! Ne postoji klasa sa tim imenom.')
-                    print('Neće bit instanciran!')
+                    print(s)
+                    print(error)
+                except AttributeError as error:
                     print(s)
                     print(error)
 
@@ -254,81 +290,7 @@ class Room:
         """Funkcija za ...
 
         """
-        # skraćivanje naziva
-        surface_input = self.game.surface_input
 
-        # Da li se ova soba iscrtava na ekranu.
-        if self.active:
-            # Testno crtanje pravokutnika plavom bojom.
-            pygame.draw.rect(surface_input, (50, 50, 250), (90, 90, 90, 90))
-
-            # Iscrtaj instance u sobi.
-            for _, instance in self.instances.items():
-                instance.draw()
-
-
-class Primitive:
-    """Instanca klase.
-
-    """
-    def __init__(self, game, rect_arg=(200, 200, 200, 200)):
-        """Primitivna inicijalizacija objekta.
-
-        """
-
-        self.game = game
-
-        self.rect = pygame.Rect(rect_arg)
-
-    def draw(self):
-        """Primitivno crtanje na ekran.
-
-        """
-        # skraćivanje naziva
-        surface_input = self.game.surface_input
-
-        # crtanje sebe
-        # Nacrtaj pravokutnik. (Najjednostavnije iscrtavanje).
-        pygame.draw.rect(surface_input, (250, 50, 250), self.rect)
-
-
-class Kumpir(Primitive):
-    def draw(self):
-        """Primitivno crtanje na ekran.
-        Alternativna funkcija
-        """
-        # skraćivanje naziva
-        surface_input = self.game.surface_input
-
-        # crtanje sebe
-        # Nacrtaj pravokutnik. (Najjednostavnije iscrtavanje).
-        pygame.draw.rect(surface_input, (250, 50, 50), self.rect)
-
-
-def crawl(folder_name):
-    """Pronađi sve fajlove u direktoriju.
-
-    """
-
-    # Lista koja će spremat zapakirane putanje do file-ova.
-    paths = []
-
-    # Spajanje temeljnog puta pomoću trenutno radnog puta i foldera kojeg se
-    # želi pretraživat.
-    parent_path = os.path.join(os.getcwd(), folder_name)
-
-    # Pretraživanje putanje za file-ovima. (Imena foldera me ne zanimaju "_").
-    for dir_path, _, file_names in os.walk(parent_path):
-
-        # Iteracija kroz sve pronađene datoteke.
-        for file in file_names:
-
-            # Stvaranje apsolutne putanje do file-a.
-            full_path = os.path.join(dir_path, file)
-
-            # Samo ime file-a bez nastavka.
-            short_file_name = file.split('.')[0]
-
-            # Pakiranje imena file-a i njegovoe pune putanje.
-            paths.append((short_file_name, full_path))
-    return paths
+        # Iscrtaj instance u sobi.
+        for _, instance in self.instances.items():
+            instance.draw()
