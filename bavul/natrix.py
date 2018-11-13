@@ -22,7 +22,7 @@ class Game:
 
 
     """
-    def __init__(self, room_zero="maps/system/room_0"):
+    def __init__(self, room_zero="room_0"):
         """Igra. Inicijalizacija igre.
 
         """
@@ -58,13 +58,17 @@ class Game:
         # Trenutno aktivna kamera
         self.camera = Camera(self)
 
-        # Testni kod.
-#        self.images['test'] = pygame.image.load('images/tilesets/xxx.png')
-
+        # Ucitaj sve resurse od igre. (sobe, slike, zvukove,...)
         self.load_resurces()
-        self.active_rooms['test_2'] = self.rooms['test_2']
-        self.active_room = self.active_rooms['test_2']
-        self.active_room.load_map()
+
+        # Aktiviraj defoltnu ili zadanu sobu.
+        self.rooms[room_zero].load_map()
+
+        # Postavi defoltnu ili zadanu sobu kao trenutno aktivnu sobu.
+        self.active_room = self.active_rooms[room_zero]
+
+        # Testni kod.
+        # self.images['test'] = pygame.image.load('images/tilesets/xxx.png')
 
     def main_loop(self):
         """Funkcija - glavna petlja.
