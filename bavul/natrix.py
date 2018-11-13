@@ -12,7 +12,7 @@ import bavul.tools as tools
 import bavul.tmx_read
 import bavul.primitive
 
-
+# Učitavanjanje svih modula sa klasama za objekte u igri.
 for modul in tools.crawl_2('bavul\\classes'):
     exec('import {}'.format(modul))
 
@@ -59,11 +59,12 @@ class Game:
         self.camera = Camera(self)
 
         # Testni kod.
-        self.images['test'] = pygame.image.load('images/tilesets/xxx.png')
+#        self.images['test'] = pygame.image.load('images/tilesets/xxx.png')
 
         self.load_resurces()
         self.active_rooms['test_2'] = self.rooms['test_2']
         self.active_room = self.active_rooms['test_2']
+        self.active_room.load_map()
 
     def main_loop(self):
         """Funkcija - glavna petlja.
@@ -282,10 +283,6 @@ class Room:
 
         # Sadržava instancirane klase u igri.
         self.instances = {}
-
-        # Testni kod
-        # Učitaj podatke o mapi. [PH]-Mapa se nebi trebala odmah učitat
-        self.load_map()
 
     def load_map(self):
         """Učitavanje osnovnih podataka o mapi.
